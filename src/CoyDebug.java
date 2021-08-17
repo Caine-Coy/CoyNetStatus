@@ -9,8 +9,8 @@ public class CoyDebug {
     
     boolean printDebug;
     boolean logDebug;
-    Stack<String> debugLog;
-    Date date;
+    static Stack<String> debugLog;
+    static Date date;
     String debugClass = "Debug";
     
     /**
@@ -43,7 +43,7 @@ public class CoyDebug {
      * @param callingObject is the object that you want this log to be reported as.
      * @param e is the exception message
      */
-    public void error(String callingObject, Exception e) {
+    public static void error(String callingObject, Exception e) {
         date = java.util.Calendar.getInstance().getTime();
         String currDebugLog = (date+" : CRITICAL ERROR!: " +callingObject+ " : " + e.getMessage());
         debugLog.push(currDebugLog);

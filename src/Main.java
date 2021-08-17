@@ -3,18 +3,26 @@ import java.net.*;
 import javax.swing.*;
 
 
-public class App {
+public class Main {
+    //classes
+    static NetworkInterface netInterface;
+    static CoyDebug debug;
+    //Vars
     static JFrame frame;
     static String localIP;
-    static Label networkLabel;
-    static String[] taggedMAC;
+    static String localMAC;
+    static String localName;
     static String[] taggedNetworks;
+    static String[] knownMACs;
+    static String[] taggedMAC;
+    //ui
+    static Label networkLabel;
     public static void main(String[] args) throws Exception {
+        debug = new CoyDebug(true,false);
         initiateWindow();
         initiateUI();
-        displayMainScreen();
-
         scanNetwork();
+        updateUI();
     }
 
     static void initiateWindow(){
@@ -27,11 +35,11 @@ public class App {
         networkLabel.setText("Eggplant");
         networkLabel.setAlignment(Label.CENTER);
         frame.getContentPane().add(networkLabel, BorderLayout.CENTER);
-    }
-    static void displayMainScreen(){
-        frame.pack();
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+    }
+    static void updateUI(){
+        frame.pack();  
     }
     static void loadConfig(){
         
@@ -39,11 +47,14 @@ public class App {
     static void scanNetwork(){
         try{
             localIP = Inet4Address.getLocalHost().getHostAddress();
-            networkLabel.setText(localIP);
+            netInterface = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
+            localMAC = CoyFunctions.convertMACtoString(netInterface.getHardwareAddress());
+            networkLabel.setText(localIP+" "+localMAC);
         }
         catch (Exception e){
             networkLabel.setText(e.toString());
         }
 
     }
+
 }

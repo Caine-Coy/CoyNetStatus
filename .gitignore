@@ -1,3 +1,2 @@
-bin/
-bin/App.class
-bin/IP.class
+bin
+.vscode

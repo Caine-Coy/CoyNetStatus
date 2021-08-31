@@ -8,6 +8,8 @@ import java.awt.Point;
  */
 
 public class CoyFunctions {
+    static String debugClass;
+
     //COORDINATE FUNCTIONS
     /**
      * 
@@ -102,4 +104,5 @@ public class CoyFunctions {
     }
 
     static void toggle(boolean value){value = !value;}
+
 }

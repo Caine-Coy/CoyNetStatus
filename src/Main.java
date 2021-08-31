@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 public class Main{
@@ -14,18 +15,20 @@ public class Main{
     static List<String> taggedNetworks;
     static List<Client> knownClients;
     static List<String> taggedIPs;
-    //ui
+    static boolean scanning = false;
+    static List<Future<?>> futures;
+    
     
     public static void main(String[] args) throws Exception {
         CoyDebug.init(true,false);
         load();
         UI.initiateWindow();
         UI.initiateUI();
-        scanNetwork();
         UI.updateUI();
     }
 
      static void load(){
+         futures = new ArrayList<Future<?>>();
          try{
             netInterface = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
          }
@@ -87,32 +90,71 @@ public class Main{
             debug.error(debugClass,e);
         }*/
         //scan net
-    ExecutorService es = Executors.newCachedThreadPool();
-    for (int device = 0; device < 256; device++){
-        String host = 192+"."+168+ "." +1+"."+device;
-            //Thread t = new Thread(netscan);
-            //t.start();
-            es.execute(new Runnable()
-            { 
-                public void run(){
-                    try {
-                        if (InetAddress.getByName(host).isReachable(5)){
-                            if (!Main.checkKnown(InetAddress.getByName(host).getHostName())){
-                                CoyDebug.addToDebug(debugClass, InetAddress.getByName(host) + " Found for the first time");
-                                Client client = new Client(InetAddress.getByName(host).getHostName(), host);
-                                knownClients.add(client);
-                                UI.updateUI();
+        if (!scanning){
+            scanning = true;
+            ExecutorService es = Executors.newCachedThreadPool();
+            for (String IP : taggedIPs){
+                futures.add(es.submit(new Runnable(){
+                    public void run(){
+                        try {
+                            if (InetAddress.getByName(IP).isReachable(100)){
+                                if (!checkKnown(IP)){
+                                    CoyDebug.addToDebug(debugClass, IP + " Found for the first time");
+                                    Client client = new Client(InetAddress.getByName(IP).getHostName(), IP);
+                                    knownClients.add(client);
+                                }
                             }
                             else{
-                                //TODO
+                                CoyDebug.addToDebug(debugClass, IP + " Cannot be connected to");
                             }
+                        } catch (Exception e) {
+                            CoyDebug.error(debugClass, e);
                         }
                         
-                    } catch (Exception e) {
-                        CoyDebug.error(debugClass, e);
+                        
                     }
-                }         
-            });  
+                }));
+            }
+                for (int device = 0; device < 256; device++){
+                    String host = 192+"."+168+ "." +0+"."+device;
+                        //Thread t = new Thread(netscan);
+                        //t.start();
+                        futures.add(es.submit(new Runnable()
+                        { 
+                            public void run(){
+                                try {
+                                    if (InetAddress.getByName(host).isReachable(100)){
+                                        if (!Main.checkKnown(InetAddress.getByName(host).getHostName())){
+                                            CoyDebug.addToDebug(debugClass, InetAddress.getByName(host) + " Found for the first time");
+                                            Client client = new Client(InetAddress.getByName(host).getHostName(), host);
+                                            knownClients.add(client);
+                                        }
+                                        else{
+                                            //TODO
+                                        }
+                                    }
+                                    
+                                } catch (Exception e) {
+                                    CoyDebug.error(debugClass, e);
+                                }
+                            }         
+                        }));
+                    }
+                    for(Future<?> f : futures){
+                        try {
+                            f.get();
+                            UI.headerLabel.setText("Working...");
+                            UI.updateUI();
+                            scanning = false;
+                            
+                        } catch (Exception e) {
+                            CoyDebug.error(debugClass, e);
+                        }
+                        
+                    }
+                    UI.headerLabel.setText("Tagged Devices");
+                
+                
         }
     }
     static void testNetworkAdapter(){

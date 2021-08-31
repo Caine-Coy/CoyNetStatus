@@ -1,6 +1,7 @@
 public class Client {
     //Vars
     String name;
+    String Alias;
     String currentIP;
     String owner;
     boolean tagged;

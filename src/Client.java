@@ -1,16 +1,18 @@
 public class Client {
     //Vars
     String name;
-    String MAC;
     String currentIP;
     String owner;
     boolean tagged;
+    ClientLabel label;
 
-    public Client(String name,String MAC,String currentIP){
+    public Client(String name,String currentIP){
         this.name = name;
-        this.MAC = MAC;
         this.currentIP = currentIP;
         tagged = true;
+        label = new ClientLabel(this);
+        UI.addClientLabel(label);
+        CoyDebug.addToDebug("Client " + name, "Client "+ name + " Created");
     }
     void Untag(){tagged = false;}
     void tag(){tagged = true;}

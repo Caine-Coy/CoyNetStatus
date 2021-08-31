@@ -7,18 +7,13 @@ import java.util.Stack;
  */
 public class CoyDebug {
     
-    boolean printDebug;
-    boolean logDebug;
+    static boolean printDebug;
+    static boolean logDebug;
     static Stack<String> debugLog;
     static Date date;
-    String debugClass = "Debug";
-    
-    /**
-     * 
-     * @param print the debug to the console?
-     * @param log the debug to a file? WIP
-     */
-    public CoyDebug(boolean print, boolean log){
+    static String debugClass = "Debug";
+
+    public static void init(boolean print, boolean log){
         printDebug = print;
         logDebug = log;
         debugLog = new Stack<String>();
@@ -31,7 +26,7 @@ public class CoyDebug {
      * @param callingObject is the object that you want this log to be reported as.
      * @param string is the text you want put on the log
      */
-    public void addToDebug(String callingObject, String string) {
+    public static void addToDebug(String callingObject, String string) {
         date = java.util.Calendar.getInstance().getTime();
         String currDebugLog = (date+" : " +callingObject+ " : " + string);
         debugLog.push(currDebugLog);

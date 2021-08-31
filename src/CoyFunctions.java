@@ -100,4 +100,6 @@ public class CoyFunctions {
         }
         return String.join("-", hex);
     }
+
+    static void toggle(boolean value){value = !value;}
 }

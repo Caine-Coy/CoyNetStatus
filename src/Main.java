@@ -24,6 +24,7 @@ public class Main{
         load();
         UI.initiateWindow();
         UI.initiateUI();
+        scanNetwork();
         UI.updateUI();
     }
 
@@ -102,6 +103,7 @@ public class Main{
                                     CoyDebug.addToDebug(debugClass, IP + " Found for the first time");
                                     Client client = new Client(InetAddress.getByName(IP).getHostName(), IP);
                                     knownClients.add(client);
+                                    UI.addClient(client);
                                 }
                             }
                             else{
@@ -110,7 +112,6 @@ public class Main{
                         } catch (Exception e) {
                             CoyDebug.error(debugClass, e);
                         }
-                        
                         
                     }
                 }));
@@ -153,7 +154,6 @@ public class Main{
                         
                     }
                     UI.headerLabel.setText("Tagged Devices");
-                
                 
         }
     }

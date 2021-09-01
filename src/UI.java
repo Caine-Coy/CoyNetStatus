@@ -1,7 +1,7 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+
 import javax.swing.*;
 
 public class UI{
@@ -14,21 +14,21 @@ public class UI{
     static JFrame frame;
     static Label headerLabel;
     static FlowLayout layout;
-    static ArrayList<ClientLabel> clientLabels;
     static Graphics gc;
+    static Canvas canvas;
+    static GraphicsPane graphicsPane;
 
     static void initiateWindow(){
         frame = new JFrame("CoyNetStatus");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         maxSize = new Dimension(maxWidth,maxHeight);
-        gc = frame.getGraphics();
+        
         
     }
 
     static void initiateUI(){
         //TODO CHANGE LAYOUT ENGINE. 2D RENDERING???
         //var setup
-        clientLabels = new ArrayList<ClientLabel>();
         //Grid setup
         layout = new FlowLayout(10,10,10);
         layout.preferredLayoutSize(frame);
@@ -43,33 +43,25 @@ public class UI{
         //labels
         headerLabel = new Label();
         headerLabel.setText("Tagged Devices");
-        //frame adding
-        frame.add(scanButton);
-        frame.add(headerLabel);
-
-        
+        canvas = new Canvas();
+        canvas.setBounds(0, 0, 800, 600);
+        graphicsPane = new GraphicsPane();
+        frame.add(graphicsPane);
         frame.setVisible(true);
-        frame.setMaximumSize(maxSize);
         frame.setLocationRelativeTo(null);
-        frame.pack();
+        frame.setSize(maxSize);
         frame.setMaximumSize(maxSize);
+        frame.pack();
     }
     static void updateUI(){  
-        frame.pack();
-        frame.setMaximumSize(maxSize);
-        
+        canvas.repaint();
     }
-    public void paint (Graphics g){
-        g.setColor(Color.red);
-        g.drawRect(50, 50, 200, 200);
+    static void addClient(Client client){
+        graphicsPane.displayedClients.add(client);
     }
-
-    static void addClientLabel(ClientLabel clientLabel){
-        if (!clientLabels.contains(clientLabel)){
-            frame.add(clientLabel.label);
-        }
-    }
+    
 
     
 
 }
+

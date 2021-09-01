@@ -5,7 +5,8 @@ import java.util.ArrayList;
 public class GraphicsPane extends JPanel{
     public int width,height;
     public ArrayList<Client> displayedClients;
-    int clientWidth = 300;
+    int clientWidth = 100;
+    int clientHeight = 50;
     int clientGap = 50;
     public GraphicsPane(){
         displayedClients = new ArrayList<Client>();
@@ -25,7 +26,7 @@ public class GraphicsPane extends JPanel{
 
     public void updateClient(Client client, Graphics g){
         if (displayedClients.contains(client)){
-            drawClient(client,g,client.x,client.y);
+            //drawClient(client,g,client.x,client.y);
         }
         else{
             displayedClients.add(client);
@@ -34,14 +35,31 @@ public class GraphicsPane extends JPanel{
             for (Client c : displayedClients){
                 if (c.x > lastX){lastX = c.x;}
                 if (c.y > lastY){lastY = c.y;}
-            }
+            client.x = lastX+clientGap;
+            client.y = lastY+clientGap;
             drawClient(client,g,lastX+clientGap,lastY+clientGap);
+            
+        }
+        
         }
     }
 
     void drawClient(Client client,Graphics g,int x,int y){
-        if (client.getFound()){
+       if (client.getFound()){
+           if (client.tagged){
+            CoyDebug.addToDebug(debugClass,"Drawing Client");
                 g.setColor(Color.green);
+                g.fillRect(x, y, x+clientWidth, y+clientHeight);
+                g.setColor(Color.black);
+                g.drawString(client.name, x+(clientWidth/2), y+(clientHeight/2));
+           }
+        }
+        else{
+            CoyDebug.addToDebug(debugClass,"Drawing Client");
+                g.setColor(Color.red);
+                g.fillRect(x, y, x+clientWidth, y+clientHeight);
+                g.setColor(Color.black);
+                g.drawString(client.name, x+(clientWidth/2), y+(clientHeight/2));
         }
     }
 

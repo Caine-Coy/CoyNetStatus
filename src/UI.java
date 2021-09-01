@@ -57,7 +57,7 @@ public class UI{
         canvas.repaint();
     }
     static void addClient(Client client){
-        graphicsPane.displayedClients.add(client);
+        graphicsPane.updateClient(client, graphicsPane.getGraphics());
     }
     
 

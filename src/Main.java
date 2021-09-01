@@ -102,8 +102,11 @@ public class Main{
                                 if (!checkKnown(IP)){
                                     CoyDebug.addToDebug(debugClass, IP + " Found for the first time");
                                     Client client = new Client(InetAddress.getByName(IP).getHostName(), IP);
+                                    client.found = true;
+                                    client.tag();
                                     knownClients.add(client);
                                     UI.addClient(client);
+                                    
                                 }
                             }
                             else{
@@ -129,6 +132,7 @@ public class Main{
                                             CoyDebug.addToDebug(debugClass, InetAddress.getByName(host) + " Found for the first time");
                                             Client client = new Client(InetAddress.getByName(host).getHostName(), host);
                                             knownClients.add(client);
+                                            client.found = true;
                                         }
                                         else{
                                             //TODO
@@ -146,6 +150,7 @@ public class Main{
                             f.get();
                             UI.headerLabel.setText("Working...");
                             UI.updateUI();
+                            es.shutdown();
                             scanning = false;
                             
                         } catch (Exception e) {
@@ -153,8 +158,7 @@ public class Main{
                         }
                         
                     }
-                    UI.headerLabel.setText("Tagged Devices");
-                
+                    UI.updateUI();
         }
     }
     static void testNetworkAdapter(){

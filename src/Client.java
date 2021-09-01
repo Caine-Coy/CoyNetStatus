@@ -13,6 +13,8 @@ public class Client {
         this.currentIP = currentIP;
         tagged = true;
         CoyDebug.addToDebug("Client " + name, "Client "+ name + " Created");
+        x = 0;
+        y = 0;
     }
     void Untag(){tagged = false;}
     void tag(){tagged = true;}

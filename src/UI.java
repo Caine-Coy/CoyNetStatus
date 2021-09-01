@@ -15,11 +15,13 @@ public class UI{
     static Label headerLabel;
     static FlowLayout layout;
     static ArrayList<ClientLabel> clientLabels;
+    static Graphics gc;
 
     static void initiateWindow(){
         frame = new JFrame("CoyNetStatus");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         maxSize = new Dimension(maxWidth,maxHeight);
+        gc = frame.getGraphics();
         
     }
 
@@ -55,6 +57,11 @@ public class UI{
     static void updateUI(){  
         frame.pack();
         frame.setMaximumSize(maxSize);
+        
+    }
+    public void paint (Graphics g){
+        g.setColor(Color.red);
+        g.drawRect(50, 50, 200, 200);
     }
 
     static void addClientLabel(ClientLabel clientLabel){

@@ -11,6 +11,7 @@ public class UI{
     //classes
     static MouseInput mouseInput;
     //ui
+    static boolean gRenderInterface = false;
     static int maxHeight = 600;
     static int maxWidth = 800;
     static Dimension maxSize;
@@ -25,8 +26,6 @@ public class UI{
         frame = new JFrame("CoyNetStatus");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         maxSize = new Dimension(maxWidth,maxHeight);
-        
-        
     }
 
     static void initiateUI(){
@@ -37,12 +36,18 @@ public class UI{
         frame.setLayout(layout);
         frame.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         //labels
-        canvas = new Canvas();
-        canvas.setBounds(0, 0, 800, 600);
-        graphicsPane = new GraphicsPane();
-        frame.add(graphicsPane);
-        mouseInput = new MouseInput();
-        canvas.addMouseListener(mouseInput);
+        if (gRenderInterface){
+            canvas = new Canvas();
+            canvas.setBounds(0, 0, 800, 600);
+            graphicsPane = new GraphicsPane();
+            frame.add(graphicsPane);
+            mouseInput = new MouseInput();
+            canvas.addMouseListener(mouseInput);
+        }
+        else{
+            Button scanButton = new Button("Scan Network");
+            frame.add(scanButton);
+        }
         frame.setResizable(false);
         frame.setVisible(true);
         frame.setSize(maxSize);
@@ -50,15 +55,20 @@ public class UI{
         frame.pack();
     }
     static void updateUI(){  
-        canvas.repaint();
-        canvas.validate();
+        if (gRenderInterface){
+            canvas.repaint();
+        }
+        frame.pack();
     }
     public void mouseEntered(MouseEvent ev){
         updateUI();
         CoyDebug.addToDebug(debugClass, "Mouse Entered");
     }
     static void addClient(Client client){
-        graphicsPane.updateClient(client);
+        if (gRenderInterface){
+            graphicsPane.updateClient(client);
+        }
+        
     }
     
 

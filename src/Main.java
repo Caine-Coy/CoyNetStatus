@@ -24,7 +24,10 @@ public class Main{
         load();
         UI.initiateWindow();
         UI.initiateUI();
-        scanNetwork();
+        if(UI.gRenderInterface){
+            scanNetwork();
+        }
+        
         UI.updateUI();
     }
 

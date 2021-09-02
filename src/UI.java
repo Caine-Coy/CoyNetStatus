@@ -1,12 +1,15 @@
 
 import java.awt.*;
-import java.awt.event.*;
 
 import javax.swing.*;
+
+import org.w3c.dom.events.MouseEvent;
 
 public class UI{
     //Vars
     static String debugClass = "UI";
+    //classes
+    static MouseInput mouseInput;
     //ui
     static int maxHeight = 600;
     static int maxWidth = 800;
@@ -27,37 +30,35 @@ public class UI{
     }
 
     static void initiateUI(){
-        //TODO CHANGE LAYOUT ENGINE. 2D RENDERING???
         //var setup
         //Grid setup
         layout = new FlowLayout(10,10,10);
         layout.preferredLayoutSize(frame);
         frame.setLayout(layout);
         frame.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        //buttons
-        JButton  scanButton = new JButton("Scan Network");
-        scanButton.addActionListener( new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                Main.scanNetwork();         
-        }});
         //labels
-        headerLabel = new Label();
-        headerLabel.setText("Tagged Devices");
         canvas = new Canvas();
         canvas.setBounds(0, 0, 800, 600);
         graphicsPane = new GraphicsPane();
         frame.add(graphicsPane);
+        mouseInput = new MouseInput();
+        canvas.addMouseListener(mouseInput);
+        frame.setResizable(false);
         frame.setVisible(true);
-        frame.setLocationRelativeTo(null);
         frame.setSize(maxSize);
         frame.setMaximumSize(maxSize);
         frame.pack();
     }
     static void updateUI(){  
         canvas.repaint();
+        canvas.validate();
+    }
+    public void mouseEntered(MouseEvent ev){
+        updateUI();
+        CoyDebug.addToDebug(debugClass, "Mouse Entered");
     }
     static void addClient(Client client){
-        graphicsPane.updateClient(client, graphicsPane.getGraphics());
+        graphicsPane.updateClient(client);
     }
     
 

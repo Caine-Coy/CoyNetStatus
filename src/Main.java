@@ -111,6 +111,11 @@ public class Main{
                             }
                             else{
                                 CoyDebug.addToDebug(debugClass, IP + " Cannot be connected to");
+                                Client client = new Client(InetAddress.getByName(IP).getHostName(), IP);
+                                client.found = false;
+                                client.tag();
+                                knownClients.add(client);
+                                UI.addClient(client);
                             }
                         } catch (Exception e) {
                             CoyDebug.error(debugClass, e);
@@ -148,8 +153,6 @@ public class Main{
                     for(Future<?> f : futures){
                         try {
                             f.get();
-                            UI.headerLabel.setText("Working...");
-                            UI.updateUI();
                             es.shutdown();
                             scanning = false;
                             
@@ -158,7 +161,7 @@ public class Main{
                         }
                         
                     }
-                    UI.updateUI();
+                    
         }
     }
     static void testNetworkAdapter(){

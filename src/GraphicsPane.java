@@ -1,15 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class GraphicsPane extends JPanel{
     public int width,height;
-    public ArrayList<Client> displayedClients;
-    int clientWidth = 100;
-    int clientHeight = 50;
-    int clientGap = 50;
+    int gridSize = 4;
+    Client[][] clientGrid= new Client[gridSize][gridSize];
+    int clientWidth = UI.maxWidth/clientGrid.length;
+    int clientHeight = UI.maxHeight/clientGrid.length;
+    int clientHGap = 60;
+    int clientVGap = 20;
+    Graphics g;
+
     public GraphicsPane(){
-        displayedClients = new ArrayList<Client>();
     }
     public String debugClass = "Graphics Pane";
     @Override
@@ -18,49 +20,45 @@ public class GraphicsPane extends JPanel{
         }
     @Override
     protected void paintComponent(Graphics g) {
+        this.g = g;
         super.paintComponent(g);
-        for (Client c : displayedClients){
-            updateClient(c,g);
-        }
+        fillClientGrid();
     }
 
-    public void updateClient(Client client, Graphics g){
-        if (displayedClients.contains(client)){
-            //drawClient(client,g,client.x,client.y);
-        }
-        else{
-            displayedClients.add(client);
-            int lastX = 0;
-            int lastY = 0;
-            for (Client c : displayedClients){
-                if (c.x > lastX){lastX = c.x;}
-                if (c.y > lastY){lastY = c.y;}
-            client.x = lastX+clientGap;
-            client.y = lastY+clientGap;
-            drawClient(client,g,lastX+clientGap,lastY+clientGap);
-            
-        }
+    public void updateClient(Client client){
+        if (client.tagged){
+            for (int x = 0;x < clientGrid[0].length;x++){
+                 if (clientGrid[x][0] == null){
+                    clientGrid[x][0] = client;
+                }
+                    
+            }
+        }       
+    }
         
-        }
-    }
-
     void drawClient(Client client,Graphics g,int x,int y){
        if (client.getFound()){
-           if (client.tagged){
-            CoyDebug.addToDebug(debugClass,"Drawing Client");
-                g.setColor(Color.green);
-                g.fillRect(x, y, x+clientWidth, y+clientHeight);
-                g.setColor(Color.black);
-                g.drawString(client.name, x+(clientWidth/2), y+(clientHeight/2));
-           }
+         CoyDebug.addToDebug(debugClass,"Drawing Connected Client " + client.name);
+            g.setColor(Color.green);
         }
         else{
-            CoyDebug.addToDebug(debugClass,"Drawing Client");
-                g.setColor(Color.red);
-                g.fillRect(x, y, x+clientWidth, y+clientHeight);
-                g.setColor(Color.black);
-                g.drawString(client.name, x+(clientWidth/2), y+(clientHeight/2));
+            CoyDebug.addToDebug(debugClass,"Drawing Disconnected Client " + client.name);
+                g.setColor(Color.red);    
         }
+        g.fillRect(x, y,clientWidth, clientHeight);
+        //Border and text
+        g.setColor(Color.black);
+        g.drawRect(x, y, clientWidth, clientHeight);
+        g.drawString(client.name, x+(clientWidth/8), y+(clientHeight/2));
+    }
+    public synchronized void fillClientGrid(){
+            for (int x = 0; x < clientGrid.length;x++){
+                for (int y = 0; y < clientGrid.length;y++){
+                    if (clientGrid[x][y] != null){
+                        drawClient(clientGrid[x][y], g, x*clientWidth,y*clientHeight);     
+                    }
+                }
+            }
     }
 
     public void setWidth(int width){this.width = width;}

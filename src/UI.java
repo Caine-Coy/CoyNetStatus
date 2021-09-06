@@ -3,8 +3,6 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import org.w3c.dom.events.MouseEvent;
-
 public class UI{
     //Vars
     static String debugClass = "UI";
@@ -17,7 +15,7 @@ public class UI{
     static Dimension maxSize;
     static JFrame frame;
     static Label headerLabel;
-    static FlowLayout layout;
+    static BorderLayout layout;
     static Graphics gc;
     static Canvas canvas;
     static GraphicsPane graphicsPane;
@@ -31,7 +29,7 @@ public class UI{
     static void initiateUI(){
         //var setup
         //Grid setup
-        layout = new FlowLayout(10,10,10);
+        layout = new BorderLayout();
         layout.preferredLayoutSize(frame);
         frame.setLayout(layout);
         frame.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -47,6 +45,9 @@ public class UI{
         else{
             Button scanButton = new Button("Scan Network");
             frame.add(scanButton);
+            scanButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+            });
         }
         frame.setResizable(false);
         frame.setVisible(true);
@@ -59,10 +60,6 @@ public class UI{
             canvas.repaint();
         }
         frame.pack();
-    }
-    public void mouseEntered(MouseEvent ev){
-        updateUI();
-        CoyDebug.addToDebug(debugClass, "Mouse Entered");
     }
     static void addClient(Client client){
         if (gRenderInterface){

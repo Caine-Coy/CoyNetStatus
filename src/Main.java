@@ -1,10 +1,6 @@
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
+import java.util.*;
+import java.util.concurrent.*;
 
 public class Main{
     //classes
@@ -14,7 +10,7 @@ public class Main{
     static Client localClient;
     static List<String> taggedNetworks;
     static List<Client> knownClients;
-    static List<String> taggedIPs;
+    static HashMap<String,String> taggedIPs;
     static boolean scanning = false;
     static List<Future<?>> futures;
     
@@ -27,7 +23,6 @@ public class Main{
         if(UI.gRenderInterface){
             scanNetwork();
         }
-        
         UI.updateUI();
     }
 
@@ -45,12 +40,12 @@ public class Main{
             taggedNetworks = new ArrayList<String>();           
         }
         if (taggedIPs == null){
-            taggedIPs = new ArrayList<String>();
-            taggedIPs.add("80.235.222.202") ;//Anchor House
-            taggedIPs.add("80.229.133.220"); //Granville Park
-            taggedIPs.add("217.46.183.253"); //Beckenham
-            taggedIPs.add("80.229.66.218"); //Stepping Stones
-            taggedIPs.add("81.133.238.123"); //Ormiston Road
+            taggedIPs = new HashMap<String,String>();
+            taggedIPs.put("80.235.222.202","Anchor House") ;//Anchor House
+            taggedIPs.put("80.229.133.220","Granville Park"); //Granville Park
+            taggedIPs.put("217.46.183.253","Beckenham"); //Beckenham
+            taggedIPs.put("80.229.66.218","Stepping Stones"); //Stepping Stones
+            taggedIPs.put("81.133.238.123","Ormiston Road"); //Ormiston Road
         }
         if (knownClients == null){
             knownClients = new ArrayList<Client>();
@@ -83,42 +78,34 @@ public class Main{
         }
         return false;
     }
+
+    static Client getKnownClientFromName(String name){
+        for (Client c: knownClients){if (name == c.name){return c;}}
+        return null;
+    }
      
     static void scanNetwork(){
-        //setup local Client
-        /*try{
-            //localClient = new Client(InetAddress.getLocalHost().getHostName(), CoyFunctions.convertMACtoString(NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress()), InetAddress.getLocalHost().getHostAddress()); 
-            //debug.addToDebug(debugClass,localClient.name + " " + localClient.MAC + " " + localClient.currentIP);
-        }
-        catch(Exception e){
-            debug.error(debugClass,e);
-        }*/
-        //scan net
         if (!scanning){
             scanning = true;
             ExecutorService es = Executors.newCachedThreadPool();
-            for (String IP : taggedIPs){
+            for (Map.Entry entry : taggedIPs.entrySet()){
                 futures.add(es.submit(new Runnable(){
                     public void run(){
+                        String IP = entry.getKey().toString();
                         try {
-                            if (InetAddress.getByName(IP).isReachable(100)){
-                                if (!checkKnown(IP)){
-                                    CoyDebug.addToDebug(debugClass, IP + " Found for the first time");
-                                    Client client = new Client(InetAddress.getByName(IP).getHostName(), IP);
-                                    client.found = true;
-                                    client.tag();
-                                    knownClients.add(client);
-                                    UI.addClient(client);
-                                    
-                                }
+                            Client client;
+                            if (!checkKnown(IP)){
+                                client = new Client(InetAddress.getByName(IP).getHostName(), IP);
+                                knownClients.add(client);
+                                client.alias = entry.getValue().toString();
+                                client.tag();
+                                client.checkIfOnline();
+                                UI.addClient(client);
                             }
                             else{
-                                CoyDebug.addToDebug(debugClass, IP + " Cannot be connected to");
-                                Client client = new Client(InetAddress.getByName(IP).getHostName(), IP);
-                                client.found = false;
-                                client.tag();
-                                knownClients.add(client);
-                                UI.addClient(client);
+                                client = getKnownClientFromName(IP);
+                                client.checkIfOnline();
+
                             }
                         } catch (Exception e) {
                             CoyDebug.error(debugClass, e);
@@ -127,6 +114,7 @@ public class Main{
                     }
                 }));
             }
+            /*
                 for (int device = 0; device < 256; device++){
                     String host = 192+"."+168+ "." +0+"."+device;
                         //Thread t = new Thread(netscan);
@@ -143,7 +131,7 @@ public class Main{
                                             client.found = true;
                                         }
                                         else{
-                                            //TODO
+                                            
                                         }
                                     }
                                     
@@ -158,16 +146,19 @@ public class Main{
                             f.get();
                             es.shutdown();
                             scanning = false;
+                            UI.updateUI();
                             
                         } catch (Exception e) {
                             CoyDebug.error(debugClass, e);
                         }
                         
                     }
+                    */
                     
         }
     }
-    static void testNetworkAdapter(){
-        
+    static void testNetworkAdapter(){   
     }
+
+    
 }

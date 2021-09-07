@@ -1,11 +1,9 @@
+import java.net.InetAddress;
+
 public class Client {
     //Vars
-    String name;
-    String Alias;
-    String currentIP;
-    String owner;
-    boolean tagged;
-    boolean found;
+    String name,currentIP,owner,status,alias;
+    boolean found,tagged;
     int x,y;
 
     public Client(String name,String currentIP){
@@ -15,9 +13,33 @@ public class Client {
         CoyDebug.addToDebug("Client " + name, "Client "+ name + " Created");
         x = 0;
         y = 0;
+        status = updateStatus();
     }
     void Untag(){tagged = false;}
     void tag(){tagged = true;}
 
-    boolean getFound(){return found;}
+    public String updateStatus(){
+        if (getFound()){status="Online";}
+        else{status="Offline";};
+        return status;
+    }
+
+    boolean getFound(){return checkIfOnline();}
+
+    boolean checkIfOnline(){
+        try {
+            if (InetAddress.getByName(currentIP).isReachable(100)){
+                found = true;
+                return true;
+            }
+            else{
+                found = false;
+                return false;
+            }
+        } catch (Exception e) {
+            CoyDebug.error(name, e);
+        }
+        return false;    
+    }
+
 }

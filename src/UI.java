@@ -1,6 +1,6 @@
 
 import java.awt.*;
-
+import java.awt.event.*;
 import javax.swing.*;
 
 public class UI{
@@ -19,6 +19,8 @@ public class UI{
     static Graphics gc;
     static Canvas canvas;
     static GraphicsPane graphicsPane;
+    static List clientList;
+    static List serverList;
 
     static void initiateWindow(){
         frame = new JFrame("CoyNetStatus");
@@ -32,7 +34,6 @@ public class UI{
         layout = new BorderLayout();
         layout.preferredLayoutSize(frame);
         frame.setLayout(layout);
-        frame.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         //labels
         if (gRenderInterface){
             canvas = new Canvas();
@@ -44,12 +45,19 @@ public class UI{
         }
         else{
             Button scanButton = new Button("Scan Network");
-            frame.add(scanButton);
+            frame.add(scanButton,BorderLayout.NORTH);
             scanButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e)
+                public void actionPerformed(ActionEvent e){
+                    Main.scanNetwork();
+                    updateUI();
+                }
             });
+            clientList = new List();
+            frame.add(clientList,BorderLayout.CENTER);
+            serverList = new List();
+            frame.add(serverList,BorderLayout.WEST);
         }
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setVisible(true);
         frame.setSize(maxSize);
         frame.setMaximumSize(maxSize);
@@ -59,13 +67,40 @@ public class UI{
         if (gRenderInterface){
             canvas.repaint();
         }
+        else{
+            for(int i = 0; i < serverList.getItems().length;i++){
+                for (Client client : Main.knownClients){
+                    if (client.name == stripName(serverList.getItem(i))){
+                        serverList.replaceItem(client.name + "(" + client.updateStatus() +")", i); 
+                    }
+                }
+                
+            }
+        }
         frame.pack();
     }
+
+   /*static void updateClient(Client client){
+        serverList.add(client.name + client.updateStatus());
+    }*/
+
     static void addClient(Client client){
         if (gRenderInterface){
             graphicsPane.updateClient(client);
         }
+        else{
+            if (client.tagged){
+                serverList.add(client.alias + "(" + client.updateStatus() + ")");
+            }
+            else{clientList.add(client.name);}
+        }
         
+    }
+
+    static String stripName(String name){
+        String[] result = name.split("\\(");
+        //CoyDebug.addToDebug(debugClass, "String split to " + result[0]);
+        return result[0];
     }
     
 
